@@ -2,7 +2,11 @@
 
 > **MSSV:** 123000882
 > **Môn học:** Xử Lý Ngôn Ngữ Tự Nhiên (NLP)
+<<<<<<< HEAD
 > **Đề tài:** Phân cụm chủ đề văn bản tiếng Việt (Vietnamese Topic Modeling & Clustering)
+=======
+> **Đề tài:** Đề 7 -  Phân cụm chủ đề văn bản tiếng Việt (Vietnamese Topic Modeling & Clustering)
+>>>>>>> 7654e8f8cf66c7f9a318f65655b85bcea68fbe37
 
 ---
 
@@ -123,6 +127,7 @@ Visualization              ──►  Scatter plot + Word cloud + Topic bar
 │
 ├── data/
 │   ├── raw/
+<<<<<<< HEAD
 │   │   ├── vnexpress_articles.csv      # Dữ liệu scrape từ VnExpress (700 bài)
 │   │   ├── vntc_articles.csv           # VNTC-10Topics — HuggingFace (VI)
 │   │   ├── newsgroups_articles.csv     # 20 Newsgroups — sklearn (EN)
@@ -161,6 +166,34 @@ Visualization              ──►  Scatter plot + Word cloud + Topic bar
 ├── README.md               # Tài liệu dự án
 ├── SETUP.md                # Hướng dẫn cài đặt môi trường
 └── DataStructure.md        # Ghi chú cấu trúc dữ liệu CSV
+=======
+│   │   ├── vnexpress_articles.csv      # Dữ liệu scrape từ VnExpress
+│   │   └── 20newsgroups.csv            # Dataset tiếng Anh để test pipeline
+│   └── processed/
+│       ├── cleaned_articles.csv        # Sau tiền xử lý
+│       └── embeddings.npy              # Vector đã tính (cache để tái sử dụng)
+│
+├── notebooks/
+│   ├── 01_scraping_vnexpress.ipynb     # Web scraping VnExpress
+│   ├── 02_EDA_and_preprocessing.ipynb  # Khám phá dữ liệu, làm sạch
+│   ├── 03_LDA_model.ipynb              # Hướng tiếp cận LDA + pyLDAvis
+│   └── 04_BERTopic_model.ipynb         # Hướng tiếp cận BERTopic (chủ đạo)
+│
+├── src/
+│   ├── scraper.py          # Module scrape dữ liệu VnExpress
+│   ├── preprocess.py       # Tiền xử lý, chuẩn hóa tiếng Việt
+│   ├── embedding.py        # Tạo sentence embeddings
+│   ├── topic_model.py      # Wrapper cho LDA và BERTopic
+│   └── visualize.py        # Hàm vẽ biểu đồ, word cloud
+│
+├── models/
+│   ├── bertopic_model/     # BERTopic model đã fit (có thể lưu/load)
+│   └── lda_model/          # Gensim LDA model
+│
+├── app.py                  # Streamlit demo app
+├── requirements.txt
+└── README.md
+>>>>>>> 7654e8f8cf66c7f9a318f65655b85bcea68fbe37
 ```
 
 ---
@@ -175,7 +208,11 @@ Visualization              ──►  Scatter plot + Word cloud + Topic bar
 - [ ] EDA (Exploratory Data Analysis)
   - Phân phối bài theo chuyên mục, độ dài văn bản, từ phổ biến nhất
   - Thống kê missing values, duplicate
+<<<<<<< HEAD
 - [ ] Tiền xử lý văn bản
+=======
+- [ ]  Tiền xử lý văn bản
+>>>>>>> 7654e8f8cf66c7f9a318f65655b85bcea68fbe37
   - Chuẩn hóa Unicode, loại ký tự đặc biệt, URL, số điện thoại
   - Tách từ bằng `underthesea`
   - Loại stopwords tiếng Việt
@@ -183,6 +220,7 @@ Visualization              ──►  Scatter plot + Word cloud + Topic bar
 
 ---
 
+<<<<<<< HEAD
 ### Xây dựng mô hình
 
 - [ ] LDA baseline
@@ -190,19 +228,36 @@ Visualization              ──►  Scatter plot + Word cloud + Topic bar
   - Đánh giá: Coherence Score (c_v, u_mass)
   - Visualize bằng `pyLDAvis`
 - [ ] BERTopic (mô hình chính)
+=======
+###  Xây dựng mô hình
+
+- [ ] * LDA baseline
+  - TF-IDF vectorize → LDA (Gensim, k=7–10 topics)
+  - Đánh giá: Coherence Score (c_v, u_mass)
+  - Visualize bằng `pyLDAvis`
+- [ ]  BERTopic (mô hình chính)
+>>>>>>> 7654e8f8cf66c7f9a318f65655b85bcea68fbe37
   - Tạo embeddings: `paraphrase-multilingual-MiniLM-L12-v2` (batch inference trên GPU)
   - Cache embeddings ra file `.npy`
   - UMAP giảm chiều (n_components=5 cho clustering, n_components=2 cho visualize)
   - HDBSCAN clustering (min_cluster_size=15)
   - c-TF-IDF trích xuất top-10 từ khoá mỗi topic
+<<<<<<< HEAD
 - [ ] Đánh giá & điều chỉnh
+=======
+- [ ]  Đánh giá & điều chỉnh
+>>>>>>> 7654e8f8cf66c7f9a318f65655b85bcea68fbe37
   - So sánh LDA vs BERTopic: Coherence, Diversity, số topic tìm được
   - Thử nghiệm với số topic khác nhau (guided topic modeling)
   - Phân tích topic -1 (outlier) trong HDBSCAN
 
 ---
 
+<<<<<<< HEAD
 ### Xây dựng Demo Streamlit
+=======
+###  Xây dựng Demo Streamlit
+>>>>>>> 7654e8f8cf66c7f9a318f65655b85bcea68fbe37
 
 - [ ] **Tab 1 — Phân tích văn bản mới:**
   - Người dùng nhập 1 đoạn văn hoặc upload file `.txt` / `.csv`
@@ -222,7 +277,11 @@ Visualization              ──►  Scatter plot + Word cloud + Topic bar
 
 ---
 
+<<<<<<< HEAD
 ### Hoàn thiện & Deploy
+=======
+###  Hoàn thiện & Deploy
+>>>>>>> 7654e8f8cf66c7f9a318f65655b85bcea68fbe37
 
 - [ ] Tối ưu performance: cache embeddings, lazy load model
 - [ ] Viết docstring, clean code

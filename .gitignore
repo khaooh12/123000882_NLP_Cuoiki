@@ -216,6 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+<<<<<<< HEAD
 .streamlit/
 
 # ============================================================
@@ -290,3 +291,5 @@ output/
 results/
 logs/
 *.log
+=======
+>>>>>>> 7654e8f8cf66c7f9a318f65655b85bcea68fbe37
