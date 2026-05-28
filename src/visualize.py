@@ -152,6 +152,33 @@ def generate_wordcloud(topic_words, topic_name):
         plt.tight_layout()
         return fig
 
+def plot_upload_scatter(texts, coords, labels, topic_info_df):
+    """Scatter plot 2D cho corpus được upload (không yêu cầu cột category)."""
+    topic_id_to_name = dict(zip(topic_info_df["Topic"], topic_info_df["Name"]))
+    plot_df = pd.DataFrame({
+        "x": coords[:, 0],
+        "y": coords[:, 1],
+        "Chủ đề": [topic_id_to_name.get(int(t), f"Topic {t}") for t in labels],
+        "Văn bản": [str(t)[:100] + "..." if len(str(t)) > 100 else str(t) for t in texts],
+    })
+    plot_df = plot_df.sort_values("Chủ đề")
+    fig = px.scatter(
+        plot_df,
+        x="x", y="y",
+        color="Chủ đề",
+        hover_name="Văn bản",
+        hover_data={"x": False, "y": False, "Chủ đề": True},
+        title="Bản đồ phân bố văn bản đã upload (2D)",
+        template="plotly_white",
+    )
+    fig.update_traces(marker=dict(size=8, opacity=0.8, line=dict(width=0.5, color="DarkSlateGrey")))
+    fig.update_layout(
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        margin=dict(l=20, r=20, t=50, b=20),
+    )
+    return fig
+
+
 def plot_topic_distribution(topic_counts_df):
     """Vẽ biểu đồ hình cột thống kê số lượng văn bản trong mỗi chủ đề"""
     topic_counts_df = topic_counts_df.sort_values(by="Count", ascending=False)

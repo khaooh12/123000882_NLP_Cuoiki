@@ -215,8 +215,6 @@ marimo/_lsp/
 __marimo__/
 
 # Streamlit
-.streamlit/secrets.toml
-<<<<<<< HEAD
 .streamlit/
 
 # ============================================================
@@ -286,10 +284,11 @@ $RECYCLE.BIN/
 # --- IDE: PyCharm / JetBrains ---
 .idea/
 
+# --- Thư mục debug/thử nghiệm ---
+scratch/
+
 # --- Các file output khác ---
 output/
 results/
 logs/
 *.log
-=======
->>>>>>> 7654e8f8cf66c7f9a318f65655b85bcea68fbe37
