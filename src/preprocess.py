@@ -3,12 +3,29 @@ import re
 import unicodedata
 import sys
 import pandas as pd
-from underthesea import word_tokenize
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
+
+try:
+    from underthesea import word_tokenize as _uts_tokenize
+    # Warm-up: tải model ngay lúc import để tránh timeout lúc xử lý thực
+    _uts_tokenize("khởi động mô hình", format="text")
+    HAS_UNDERTHESEA = True
+except Exception:
+    HAS_UNDERTHESEA = False
+
+
+def _word_tokenize(text: str) -> str:
+    """Tách từ tiếng Việt; fallback về split khoảng trắng nếu underthesea lỗi."""
+    if HAS_UNDERTHESEA:
+        try:
+            return _uts_tokenize(text, format="text")
+        except Exception:
+            pass
+    return text
 
 # List of common Vietnamese stopwords
 VIETNAMESE_STOPWORDS = {
@@ -58,13 +75,8 @@ def preprocess_text(text):
     text = re.sub(r'[^a-z0-9àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ\s]', ' ', text)
     text = re.sub(r'\s+', ' ', text).strip()
     
-    # 5. Word Segmentation using underthesea
-    try:
-        tokenized = word_tokenize(text, format="text")
-    except Exception as e:
-        # Fallback to simple split if word_tokenize fails
-        print(f"[Cảnh báo] Lỗi tách từ underthesea: {e}. Sử dụng tách từ cơ bản.")
-        tokenized = text
+    # 5. Word Segmentation using underthesea (fallback to raw text if unavailable)
+    tokenized = _word_tokenize(text)
         
     # 6. Stopwords removal
     tokens = tokenized.split()

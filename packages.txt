@@ -1,0 +1,3 @@
+libpng-dev
+libjpeg-dev
+build-essential

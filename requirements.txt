@@ -17,3 +17,4 @@ streamlit>=1.35.0
 plotly>=5.18.0
 matplotlib>=3.8.0
 wordcloud>=1.9.3
+umap-learn>=0.5.6
