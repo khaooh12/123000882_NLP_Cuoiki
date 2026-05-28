@@ -1,5 +1,6 @@
 import os
 import sys
+import html as _html
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -54,18 +55,13 @@ st.sidebar.markdown("🏛️ **MSSV:** 123000882  \n**Môn học:** NLP Cuối K
 
 # ── Page title ─────────────────────────────────────────────────────────────────
 st.markdown("<div class='main-title'>🗺️ BẢN ĐỒ CHỦ ĐỀ VĂN BẢN TIẾNG VIỆT</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>Demo phân cụm chủ đề không giám sát · KMeans + SBERT</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Demo phân cụm chủ đề không giám sát · KMeans + TF-IDF</div>", unsafe_allow_html=True)
 
 # ── Encode helper ──────────────────────────────────────────────────────────────
 def encode_texts(texts):
-    try:
-        from sentence_transformers import SentenceTransformer
-        model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
-        return model.encode(texts, show_progress_bar=False, batch_size=32)
-    except Exception:
-        from sklearn.feature_extraction.text import TfidfVectorizer
-        vect = TfidfVectorizer(max_features=384)
-        return vect.fit_transform(texts).toarray()
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    vect = TfidfVectorizer(max_features=384)
+    return vect.fit_transform(texts).toarray()
 
 # ── Pipeline ───────────────────────────────────────────────────────────────────
 def run_pipeline(texts, n_topics):
@@ -93,55 +89,80 @@ def run_pipeline(texts, n_topics):
         "filtered_out": filtered_out,
     }
 
-# ── Upload UI ──────────────────────────────────────────────────────────────────
-st.markdown("### 📂 Upload Tập Văn Bản")
-st.write(
-    "Tải lên file **CSV** (cần cột `text`, `title`, `description` hoặc `content`) "
-    "hoặc file **TXT** (mỗi dòng là 1 văn bản). "
-    "Hệ thống sẽ tự động phân cụm theo số chủ đề bạn chọn ở thanh bên."
-)
+# ── Input section ──────────────────────────────────────────────────────────────
+st.markdown("### 📥 Nhập Dữ Liệu")
+tab_upload, tab_text = st.tabs(["📂 Upload File", "✏️ Nhập Văn Bản"])
 
-uploaded = st.file_uploader("Chọn file CSV hoặc TXT:", type=["csv", "txt"])
-run_btn = st.button("🚀 Phân Tích Ngay", use_container_width=True, disabled=(uploaded is None))
+with tab_upload:
+    st.write(
+        "Tải lên file **CSV** (cần cột `text`, `title`, `description` hoặc `content`) "
+        "hoặc file **TXT** (mỗi dòng là 1 văn bản)."
+    )
+    uploaded = st.file_uploader("Chọn file CSV hoặc TXT:", type=["csv", "txt"])
+    run_file_btn = st.button("🚀 Phân Tích File", use_container_width=True, disabled=(uploaded is None))
 
-if uploaded is not None and run_btn:
-    try:
-        if uploaded.name.endswith(".csv"):
-            raw_df = pd.read_csv(uploaded)
-            text_col = next(
-                (c for c in ["text", "content", "title", "description", "cleaned_text"]
-                 if c in raw_df.columns), None
-            )
-            if text_col is None:
-                st.error(
-                    f"File CSV phải có một trong các cột: text, content, title, description. "
-                    f"Các cột hiện tại: {', '.join(raw_df.columns)}"
+    if uploaded is not None and run_file_btn:
+        try:
+            if uploaded.name.endswith(".csv"):
+                raw_df = pd.read_csv(uploaded)
+                text_col = next(
+                    (c for c in ["text", "content", "title", "description", "cleaned_text"]
+                     if c in raw_df.columns), None
                 )
+                if text_col is None:
+                    st.error(
+                        f"File CSV phải có một trong các cột: text, content, title, description. "
+                        f"Các cột hiện tại: {', '.join(raw_df.columns)}"
+                    )
+                    st.stop()
+                raw_texts = raw_df[text_col].fillna("").astype(str).tolist()
+            else:
+                content = uploaded.read().decode("utf-8", errors="replace")
+                raw_texts = [ln.strip() for ln in content.split("\n") if ln.strip()]
+
+            if len(raw_texts) < 10:
+                st.warning("Cần ít nhất **10 văn bản** để phân cụm. Vui lòng upload file lớn hơn.")
                 st.stop()
-            raw_texts = raw_df[text_col].fillna("").astype(str).tolist()
-        else:
-            content = uploaded.read().decode("utf-8", errors="replace")
-            raw_texts = [ln.strip() for ln in content.split("\n") if ln.strip()]
 
-        if len(raw_texts) < 10:
-            st.warning("Cần ít nhất **10 văn bản** để phân cụm. Vui lòng upload file lớn hơn.")
-            st.stop()
+            if len(raw_texts) > 2000:
+                st.warning(f"File có {len(raw_texts):,} văn bản — chỉ xử lý **2,000 văn bản đầu** để đảm bảo hiệu năng.")
+                raw_texts = raw_texts[:2000]
 
-        if len(raw_texts) > 5000:
-            st.info(f"File có {len(raw_texts):,} văn bản — quá trình có thể mất vài phút.")
+            with st.spinner("Đang xử lý: tiền xử lý → mã hóa TF-IDF → phân cụm KMeans → giảm chiều 2D..."):
+                result = run_pipeline(raw_texts, n_topics)
 
-        with st.spinner("Đang xử lý: tiền xử lý → mã hóa SBERT → phân cụm KMeans → giảm chiều 2D..."):
+            if result is None:
+                st.error("Toàn bộ văn bản sau tiền xử lý đều rỗng. Vui lòng kiểm tra nội dung file.")
+                st.stop()
+
+            st.session_state["result"] = result
+            st.session_state["file_name"] = uploaded.name
+
+        except Exception as e:
+            st.error(f"Lỗi khi xử lý file: {e}")
+
+with tab_text:
+    st.write(
+        "Dán hoặc gõ trực tiếp đoạn văn bản. Mỗi **dòng** là một câu/đoạn văn."
+    )
+    pasted = st.text_area(
+        "Nhập văn bản (mỗi dòng = 1 câu/đoạn):",
+        height=220,
+        placeholder="Ví dụ:\nHội đồng quản trị thông qua kế hoạch mở rộng thị trường.\nĐội tuyển Việt Nam giành chiến thắng 2-0 trước đối thủ.\n...",
+    )
+    run_text_btn = st.button("🚀 Phân Tích Văn Bản", use_container_width=True, disabled=not pasted.strip())
+
+    if pasted.strip() and run_text_btn:
+        raw_texts = [ln.strip() for ln in pasted.splitlines() if ln.strip()]
+        with st.spinner("Đang xử lý: tiền xử lý → mã hóa TF-IDF → phân cụm KMeans → giảm chiều 2D..."):
             result = run_pipeline(raw_texts, n_topics)
 
         if result is None:
-            st.error("Toàn bộ văn bản sau tiền xử lý đều rỗng. Vui lòng kiểm tra nội dung file.")
+            st.error("Toàn bộ văn bản sau tiền xử lý đều rỗng. Vui lòng kiểm tra nội dung.")
             st.stop()
 
         st.session_state["result"] = result
-        st.session_state["file_name"] = uploaded.name
-
-    except Exception as e:
-        st.error(f"Lỗi khi xử lý file: {e}")
+        st.session_state["file_name"] = f"văn bản ({len(raw_texts)} dòng)"
 
 # ── Hiển thị kết quả ───────────────────────────────────────────────────────────
 if "result" in st.session_state:
@@ -151,6 +172,7 @@ if "result" in st.session_state:
         r["originals"], r["embs"], r["labels"], r["model"], r["coords"], r["filtered_out"]
     )
     topic_info = model.get_topic_info()
+    tid_to_name = dict(zip(topic_info["Topic"], topic_info["Name"]))
 
     if filtered_out > 0:
         st.caption(f"ℹ️ Đã lọc bỏ {filtered_out} văn bản rỗng sau tiền xử lý.")
@@ -172,7 +194,6 @@ if "result" in st.session_state:
         st.dataframe(pd.DataFrame(table_rows), use_container_width=True, hide_index=True)
 
         # Download
-        tid_to_name = dict(zip(topic_info["Topic"], topic_info["Name"]))
         result_rows = [
             {
                 "Văn bản gốc": orig[:200],
@@ -213,5 +234,56 @@ if "result" in st.session_state:
         fig_wc = generate_wordcloud(topic_words, topic_names[sel_idx])
         st.pyplot(fig_wc)
 
-elif uploaded is None:
-    st.info("Hãy tải lên file văn bản để bắt đầu phân cụm.")
+    # ── Văn bản gốc tô màu theo chủ đề ─────────────────────────────────────────
+    _TOPIC_COLORS = [
+        "#FFE0B2", "#C8E6C9", "#BBDEFB", "#F8BBD9", "#E1BEE7",
+        "#B2EBF2", "#FFF9C4", "#FFCCBC", "#D7CCC8", "#CFD8DC",
+        "#DCEDC8", "#F0F4C3",
+    ]
+    _BORDER_COLORS = [
+        "#FB8C00", "#43A047", "#1E88E5", "#E91E63", "#8E24AA",
+        "#00ACC1", "#F9A825", "#F4511E", "#6D4C41", "#546E7A",
+        "#7CB342", "#C0CA33",
+    ]
+    tid_to_color = {
+        int(row["Topic"]): _TOPIC_COLORS[i % len(_TOPIC_COLORS)]
+        for i, (_, row) in enumerate(topic_info.iterrows())
+    }
+    tid_to_border = {
+        int(row["Topic"]): _BORDER_COLORS[i % len(_BORDER_COLORS)]
+        for i, (_, row) in enumerate(topic_info.iterrows())
+    }
+
+    st.markdown("---")
+    st.markdown("#### 🎨 Văn Bản Gốc Tô Màu Theo Chủ Đề")
+
+    legend_html = "<div style='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;'>"
+    for _, row in topic_info.iterrows():
+        color = tid_to_color[int(row["Topic"])]
+        border = tid_to_border[int(row["Topic"])]
+        legend_html += (
+            f"<span style='background:{color};border-left:4px solid {border};"
+            f"padding:4px 12px;border-radius:4px;font-size:0.82rem;font-weight:600;'>"
+            f"{row['Name']}</span>"
+        )
+    legend_html += "</div>"
+    st.markdown(legend_html, unsafe_allow_html=True)
+
+    blocks_html = ""
+    for text, label in zip(originals, labels):
+        color = tid_to_color.get(int(label), "#F5F5F5")
+        border = tid_to_border.get(int(label), "#BDBDBD")
+        topic_name = tid_to_name.get(int(label), f"Topic {label}")
+        safe_text = _html.escape(str(text))
+        blocks_html += (
+            f"<div style='background:{color};padding:10px 14px;margin:5px 0;"
+            f"border-radius:6px;border-left:4px solid {border};line-height:1.7;'>"
+            f"<span style='font-size:0.72rem;color:#444;font-weight:700;"
+            f"text-transform:uppercase;letter-spacing:0.06em;'>{topic_name}</span><br>"
+            f"<span style='font-size:0.95rem;color:#212121;'>{safe_text}</span>"
+            f"</div>"
+        )
+    st.markdown(blocks_html, unsafe_allow_html=True)
+
+else:
+    st.info("Hãy upload file hoặc nhập văn bản để bắt đầu phân cụm.")

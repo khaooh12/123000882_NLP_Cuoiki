@@ -1,8 +1,14 @@
 import os
 import re
 import unicodedata
+import sys
 import pandas as pd
 from underthesea import word_tokenize
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
 
 # List of common Vietnamese stopwords
 VIETNAMESE_STOPWORDS = {
@@ -15,7 +21,10 @@ VIETNAMESE_STOPWORDS = {
     "phương_tiện", "hoạt_động", "thực_hiện", "tiến_hành", "liên_quan", "chúng_ta", "chúng_tôi", "ông", "bà",
     "anh", "chị", "em", "nó", "chúng", "tôi", "ta", "mình", "cậu", "tớ", "nào", "gì", "ai", "đâu", "sao", 
     "thế", "nào", "bao_nhiêu", "vậy", "nhé", "nha", "ừ", "vâng", "dạ", "a", "à", "ơi", "thế_nào", "thay_vì",
-    "dưới", "ngoài", "giữa", "bên", "trong_đó", "bên_cạnh", "ngoài_ra", "đặc_biệt", "đồng_thời", "trực_tiếp"
+    "dưới", "ngoài", "giữa", "bên", "trong_đó", "bên_cạnh", "ngoài_ra", "đặc_biệt", "đồng_thời", "trực_tiếp",
+    # Từ phổ biến không mang nghĩa chủ đề
+    "một", "không", "người", "đó", "bị", "làm", "hai", "còn", "thứ", "phải", "vì", "lên", "mà",
+    "bạn", "có_thể", "tp", "lần", "vừa", "rất", "hết", "đi", "đây",
 }
 
 def clean_html_and_urls(text):
@@ -97,7 +106,7 @@ def main():
 
     if not os.path.exists(args.input):
         print(f"[Lỗi] Không tìm thấy file: {args.input}")
-        print("Hãy chạy 'python src/scraper.py' hoặc 'python src/data_loader.py' trước.")
+        print("Vui lòng đặt file CSV dữ liệu thô vào data/raw/ trước khi chạy.")
         return
 
     os.makedirs(os.path.dirname(args.output), exist_ok=True)

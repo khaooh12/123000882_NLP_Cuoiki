@@ -182,7 +182,7 @@ def plot_upload_scatter(texts, coords, labels, topic_info_df):
 def plot_topic_distribution(topic_counts_df):
     """Vẽ biểu đồ hình cột thống kê số lượng văn bản trong mỗi chủ đề"""
     topic_counts_df = topic_counts_df.sort_values(by="Count", ascending=False)
-    
+
     fig = px.bar(
         topic_counts_df,
         x="Name",
@@ -199,5 +199,63 @@ def plot_topic_distribution(topic_counts_df):
         xaxis=dict(tickangle=30),
         margin=dict(l=20, r=20, t=50, b=20),
         coloraxis_showscale=False
+    )
+    return fig
+
+
+def scatter_full_dataset(embeddings, labels, topic_names, titles, sample_n=5000):
+    """Scatter 2D cho toàn bộ dataset (sample để tăng tốc render)."""
+    n = len(embeddings)
+    if n > sample_n:
+        idx = np.random.choice(n, sample_n, replace=False)
+        emb_s   = embeddings[idx]
+        lbl_s   = [labels[i] for i in idx]
+        ttl_s   = [titles[i] for i in idx]
+    else:
+        emb_s, lbl_s, ttl_s = embeddings, labels, titles
+
+    coords = reduce_dimensions_2d(emb_s)
+    label_names = [topic_names.get(int(l), f"Topic {l}") for l in lbl_s]
+
+    plot_df = pd.DataFrame({
+        "x": coords[:, 0],
+        "y": coords[:, 1],
+        "Chủ đề": label_names,
+        "Tiêu đề": [str(t)[:80] for t in ttl_s],
+    })
+    plot_df = plot_df.sort_values("Chủ đề")
+
+    fig = px.scatter(
+        plot_df, x="x", y="y",
+        color="Chủ đề",
+        hover_name="Tiêu đề",
+        hover_data={"x": False, "y": False, "Chủ đề": True},
+        title=f"Bản đồ phân bố {len(emb_s):,} văn bản (sample)",
+        template="plotly_white",
+    )
+    fig.update_traces(marker=dict(size=5, opacity=0.7, line=dict(width=0, color="DarkSlateGrey")))
+    fig.update_layout(
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        margin=dict(l=20, r=20, t=50, b=20),
+    )
+    return fig
+
+
+def plot_category_distribution(df):
+    """Bar chart phân bố chuyên mục gốc trong dataset."""
+    if "category" not in df.columns:
+        return None
+    cat_counts = df["category"].value_counts().reset_index()
+    cat_counts.columns = ["Chuyên mục", "Số bài"]
+    fig = px.bar(
+        cat_counts, x="Chuyên mục", y="Số bài",
+        color="Số bài", color_continuous_scale="Blues",
+        text="Số bài", template="plotly_white",
+        title="Phân bố chuyên mục trong dataset",
+    )
+    fig.update_traces(textposition="outside")
+    fig.update_layout(
+        xaxis=dict(tickangle=30), coloraxis_showscale=False,
+        margin=dict(l=20, r=20, t=50, b=20),
     )
     return fig

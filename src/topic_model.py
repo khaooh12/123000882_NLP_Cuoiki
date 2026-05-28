@@ -21,42 +21,57 @@ TOPIC_SIGNATURES = {
         "thi_đấu", "huy_chương", "cúp", "bóng_rổ", "tennis", "vleague",
         "seagames", "thể_thao", "bóng_chuyền", "bơi_lội", "võ", "clb",
         "ghi_bàn", "thủ_môn", "tiền_đạo", "huấn_luyện_viên",
+        "ngoại_hạng", "kết_quả", "bảng_xếp_hạng", "vòng", "đội_tuyển",
+        "cầu_lông", "pickleball", "golf", "golfer", "roland_garros",
     },
     "💼 Kinh doanh": {
         "doanh_nghiệp", "thị_trường", "tỷ_đồng", "cổ_phiếu", "ngân_hàng",
         "lãi_suất", "xuất_khẩu", "đầu_tư", "doanh_thu", "lợi_nhuận",
         "kinh_tế", "tài_chính", "chứng_khoán", "gdp", "vnd", "tỷ_giá",
         "doanh_nhân", "hàng_hóa", "thương_mại", "nhập_khẩu", "vốn",
+        "vàng", "giá_vàng", "sjc", "lạm_phát", "tăng_trưởng",
+        "kinh_doanh", "thương_hiệu", "bất_động_sản", "bitcoin",
+        "giá", "triệu", "tỷ", "đồng", "lượng",
     },
     "❤️ Sức khỏe": {
         "bệnh", "bệnh_nhân", "thuốc", "bệnh_viện", "điều_trị", "bác_sĩ",
         "ung_thư", "covid", "vaccine", "sức_khỏe", "y_tế", "phẫu_thuật",
         "dịch", "virus", "triệu_chứng", "chăm_sóc", "dinh_dưỡng",
-        "bác_sĩ", "y_khoa", "sức_đề_kháng",
+        "y_khoa", "sức_đề_kháng",
+        "nguy_cơ", "máu", "xương", "gan", "uống", "ăn",
+        "huyết_áp", "đường_huyết", "tim", "thận", "buồng_trứng",
+        "chế_độ", "dinh_dưỡng", "thực_phẩm_chức_năng",
     },
     "📰 Thời sự": {
-        "chính_phủ", "bộ_trưởng", "quốc_hội", "chính_sách", "tphcm",
-        "hà_nội", "ủy_ban", "nghị_quyết", "đảng", "nhà_nước", "công_an",
-        "an_ninh", "xã_hội", "vụ_việc", "thủ_tướng", "bộ",
-        "tỉnh", "huyện", "xã", "phường",
+        "chính_phủ", "bộ_trưởng", "quốc_hội", "chính_sách",
+        "ủy_ban", "nghị_quyết", "đảng", "nhà_nước",
+        "an_ninh", "xã_hội", "thủ_tướng",
+        "tai_nạn", "giao_thông", "cháy", "nắng_nóng", "lũ_lụt",
+        "thiên_tai", "bão", "ngập", "tử_vong", "nạn_nhân",
+        "nóng", "nắng", "miền_bắc", "trung_bộ", "độ",
     },
     "🎓 Giáo dục": {
         "học_sinh", "giáo_viên", "trường", "đại_học", "tuyển_sinh",
         "giáo_dục", "học_bổng", "kỳ_thi", "môn_học", "sinh_viên",
         "thpt", "điểm", "chương_trình", "học_phí", "đào_tạo",
         "lớp", "giảng_dạy", "khoa", "cử_nhân",
+        "đề", "thi", "thí_sinh", "đáp_án", "môn",
+        "trường_đại_học", "tuyển_sinh", "điểm_chuẩn",
     },
     "✈️ Du lịch": {
-        "du_lịch", "khách", "điểm_đến", "resort", "khách_sạn", "tour",
-        "biển", "thắng_cảnh", "ẩm_thực", "lễ_hội", "tham_quan",
+        "du_lịch", "du_khách", "khách", "điểm_đến", "resort", "khách_sạn",
+        "tour", "biển", "thắng_cảnh", "ẩm_thực", "lễ_hội", "tham_quan",
         "nghỉ_dưỡng", "đặt_phòng", "hàng_không", "vé_máy_bay",
         "danh_lam", "di_tích", "cảnh_quan", "bãi_biển",
+        "đảo", "trải_nghiệm", "check_in", "điểm_du_lịch",
     },
     "⚖️ Pháp luật": {
         "tòa_án", "xét_xử", "bị_cáo", "tội", "án", "khởi_tố",
         "điều_tra", "vi_phạm", "phạt", "bắt_giữ", "truy_tố",
         "luật", "hình_sự", "dân_sự", "cơ_quan_điều_tra",
         "bị_can", "thi_hành_án", "tạm_giam",
+        "bắt", "đường_dây", "chiếm_đoạt", "lừa_đảo", "tội_phạm",
+        "tham_nhũng", "khởi_tố_bị_can", "truy_nã", "hành_vi",
     },
     "🔬 Khoa học-CN": {
         "công_nghệ", "ai", "phần_mềm", "robot", "điện_thoại", "máy_tính",
@@ -69,24 +84,15 @@ TOPIC_SIGNATURES = {
 
 def _infer_topic_name(topic_words_list, signatures=TOPIC_SIGNATURES):
     """
-    Suy diễn tên chủ đề có ý nghĩa bằng cách tính overlap giữa
-    topic_words và từng bộ từ khoá đặc trưng trong TOPIC_SIGNATURES.
-
-    Tham số:
-        topic_words_list: list of (word, score) tuples từ c-TF-IDF
-        signatures: dict {tên_chủ_đề: set_từ_khoá}
-
-    Trả về:
-        str — tên chủ đề có ý nghĩa, hoặc fallback dạng "Chủ đề (kw1_kw2_kw3)"
+    Suy diễn tên chủ đề bằng cách tính tổng điểm TF-IDF của các từ
+    khớp với từng bộ từ khoá đặc trưng — dùng trọng số thay vì đếm đơn thuần.
     """
-    word_set = {w.lower() for w, _ in topic_words_list}
-    best_name, best_score = None, -1
+    best_name, best_score = None, 0.0
     for name, sig_words in signatures.items():
-        overlap = len(word_set & sig_words)
-        if overlap > best_score:
-            best_score, best_name = overlap, name
-    # Nếu không overlap → fallback về top-3 keywords
-    if best_score == 0 or best_name is None:
+        score = sum(s for w, s in topic_words_list if w.lower() in sig_words)
+        if score > best_score:
+            best_score, best_name = score, name
+    if best_score == 0.0 or best_name is None:
         top3 = "_".join([w for w, _ in topic_words_list[:3]])
         return f"Chủ đề ({top3})"
     return best_name
@@ -309,202 +315,24 @@ def train_lda(df, num_topics=7):
         
         return lda_model, coherence_score
 
-def train_bertopic(df, embeddings, num_topics=7):
-    print("\n[Topic Model] Huấn luyện mô hình BERTopic...")
-    os.makedirs("models/bertopic_model", exist_ok=True)
-    
-    docs = df["cleaned_text"].fillna("").astype(str).tolist()
-    
-    # Attempt to load BERTopic and HDBSCAN
-    try:
-        from bertopic import BERTopic
-        from umap import UMAP
-        from hdbscan import HDBSCAN
-        from sklearn.feature_extraction.text import CountVectorizer
-        from bertopic.vectorizers import ClassTfidfTransformer
-        
-        print("  Đang khởi tạo các thành phần BERTopic (UMAP, HDBSCAN, c-TF-IDF)...")
-        umap_model = UMAP(n_neighbors=15, n_components=5, min_dist=0.0, metric='cosine', random_state=42)
-        hdbscan_model = HDBSCAN(min_cluster_size=10, metric='euclidean', cluster_selection_method='eom', prediction_data=True)
-        vectorizer_model = CountVectorizer(ngram_range=(1, 2))
-        ctfidf_model = ClassTfidfTransformer()
-        
-        topic_model = BERTopic(
-            umap_model=umap_model,
-            hdbscan_model=hdbscan_model,
-            vectorizer_model=vectorizer_model,
-            ctfidf_model=ctfidf_model,
-            nr_topics=num_topics
-        )
-        
-        topics, probs = topic_model.fit_transform(docs, embeddings)
-        topic_model.save("models/bertopic_model/bertopic", serialization="pickle")
-        print("  Huấn luyện BERTopic thành công!")
-        
-        # Calculate approximate coherence using gensim
-        try:
-            topic_info = topic_model.get_topic_info()
-            topic_words = []
-            for t_id in topic_info["Topic"]:
-                if t_id == -1:
-                    continue
-                words = [w[0] for w in topic_model.get_topic(t_id)[:10]]
-                topic_words.append(words)
-                
-            tokenized_docs = [doc.split() for doc in docs]
-            dictionary = corpora.Dictionary(tokenized_docs)
-            coherence_model = CoherenceModel(
-                topics=topic_words,
-                texts=tokenized_docs,
-                dictionary=dictionary,
-                coherence="c_v"
-            )
-            coherence_score = coherence_model.get_coherence()
-            print(f"  BERTopic Coherence Score (c_v): {coherence_score:.4f}")
-        except Exception as e:
-            print(f"  [Cảnh báo] Lỗi tính Coherence cho BERTopic: {e}")
-            coherence_score = 0.55
-            
-        return topic_model, coherence_score, False
-        
-    except Exception as e:
-        print(f"\n[Cảnh báo] Không thể chạy BERTopic chính thức (Lỗi: {e})")
-        print("  -> Chuyển sang mô hình dự phòng FallbackTopicModel (KMeans + c-TF-IDF)...")
-        
-        fallback_model = FallbackTopicModel(n_topics=num_topics)
-        topics, _ = fallback_model.fit_transform(docs, embeddings)
-        fallback_model.save("models/bertopic_model/fallback")
-        
-        # Compute coherence score for fallback
-        try:
-            if HAS_GENSIM:
-                topic_words = []
-                for t_id in range(num_topics):
-                    words = [w[0] for w in fallback_model.get_topic(t_id)]
-                    if words:
-                        topic_words.append(words)
-                tokenized_docs = [doc.split() for doc in docs]
-                dictionary = corpora.Dictionary(tokenized_docs)
-                coherence_model = CoherenceModel(
-                    topics=topic_words,
-                    texts=tokenized_docs,
-                    dictionary=dictionary,
-                    coherence="c_v"
-                )
-                coherence_score = coherence_model.get_coherence()
-            else:
-                coherence_score = 0.52
-            print(f"  Fallback Model Coherence Score (c_v): {coherence_score:.4f}")
-        except Exception as ce:
-            print(f"  Lỗi tính Coherence cho Fallback Model: {ce}")
-            coherence_score = 0.45
-            
-        return fallback_model, coherence_score, True
-
-
-def soft_assign_outliers(embeddings, topics, bertopic_model):
-    """
-    Với mỗi document bị gán topic -1 (HDBSCAN outlier), tính cosine similarity
-    với centroid của từng topic đã học và gán vào topic có similarity cao nhất.
-
-    Tham số:
-        embeddings : np.ndarray shape (N, dim) — SBERT embeddings của tập dữ liệu
-        topics     : list/np.ndarray shape (N,) — topic assignments, có thể chứa -1
-        bertopic_model : BERTopic instance đã fit (có thể có .topic_embeddings_)
-
-    Trả về:
-        new_topics : np.ndarray shape (N,) — không còn -1
-    """
-    topics = np.array(topics)
-    new_topics = topics.copy()
-
-    outlier_mask = topics == -1
-    if not outlier_mask.any():
-        return new_topics  # không có outlier, trả về nguyên bản
-
-    topic_info = bertopic_model.get_topic_info()
-    valid_topics = [t for t in topic_info["Topic"].tolist() if t != -1]
-
-    if not valid_topics:
-        return new_topics
-
-    # ── Lấy centroids ──────────────────────────────────────────────────────────
-    # Ưu tiên dùng topic_embeddings_ của BERTopic (offset +1 vì index 0 là topic -1)
-    centroids = {}
-    if hasattr(bertopic_model, "topic_embeddings_") and bertopic_model.topic_embeddings_ is not None:
-        try:
-            for t in valid_topics:
-                idx = t + 1
-                if 0 <= idx < len(bertopic_model.topic_embeddings_):
-                    centroids[t] = np.array(bertopic_model.topic_embeddings_[idx])
-        except Exception:
-            centroids = {}
-
-    # Fallback: tính centroid thủ công từ embedding của các doc đã được assign
-    if not centroids:
-        for t in valid_topics:
-            mask_t = topics == t
-            if mask_t.sum() > 0:
-                centroids[t] = embeddings[mask_t].mean(axis=0)
-
-    if not centroids:
-        return new_topics
-
-    # ── Xây ma trận centroid và normalize ──────────────────────────────────────
-    centroid_keys = list(centroids.keys())
-    centroid_matrix = np.array([centroids[t] for t in centroid_keys], dtype=np.float32)
-    c_norms = np.linalg.norm(centroid_matrix, axis=1, keepdims=True)
-    c_norms[c_norms == 0] = 1.0
-    centroid_matrix = centroid_matrix / c_norms
-
-    # ── Xử lý từng outlier ─────────────────────────────────────────────────────
-    outlier_embs = embeddings[outlier_mask].astype(np.float32)
-    e_norms = np.linalg.norm(outlier_embs, axis=1, keepdims=True)
-    e_norms[e_norms == 0] = 1.0
-    outlier_embs_normed = outlier_embs / e_norms
-
-    # Cosine similarity matrix: (M outliers, K topics)
-    sim_matrix = np.dot(outlier_embs_normed, centroid_matrix.T)
-    best_indices = sim_matrix.argmax(axis=1)
-    new_topics[outlier_mask] = [centroid_keys[idx] for idx in best_indices]
-
-    return new_topics
-
-
 def main():
     cleaned_path = "data/processed/cleaned_articles.csv"
-    embeddings_path = "data/processed/embeddings.npy"
-    
-    if not os.path.exists(cleaned_path) or not os.path.exists(embeddings_path):
-        print("[Lỗi] Không tìm thấy dữ liệu tiền xử lý hoặc embeddings.")
-        print("Vui lòng chạy 'python src/preprocess.py' và 'python src/embedding.py' trước.")
+
+    if not os.path.exists(cleaned_path):
+        print("[Lỗi] Không tìm thấy dữ liệu tiền xử lý.")
+        print("Vui lòng chạy 'python src/preprocess.py' trước.")
         return
-        
+
     df = pd.read_csv(cleaned_path)
-    embeddings = np.load(embeddings_path)
-    
-    # Train LDA
+
     _, lda_coherence = train_lda(df, num_topics=7)
-    
-    # Train BERTopic (or Fallback KMeans)
-    _, bertopic_coherence, is_fallback = train_bertopic(df, embeddings, num_topics=7)
-    
-    # Save evaluation metrics
-    metrics = {
-        "lda": {
-            "coherence_cv": float(lda_coherence)
-        },
-        "bertopic": {
-            "coherence_cv": float(bertopic_coherence),
-            "is_fallback": is_fallback
-        }
-    }
-    
+
+    import json
+    metrics = {"lda": {"coherence_cv": float(lda_coherence)}}
     with open("models/metrics.json", "w", encoding="utf-8") as f:
-        import json
         json.dump(metrics, f, indent=4, ensure_ascii=False)
-        
-    print("\n[Topic Model Hoàn tất] Toàn bộ mô hình đã được huấn luyện và lưu vào models/")
+
+    print("\n[Topic Model Hoàn tất] Mô hình đã được huấn luyện và lưu vào models/")
     print(f"  - Chỉ số Coherence (c_v) đã được lưu vào models/metrics.json")
 
 if __name__ == "__main__":

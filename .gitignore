@@ -222,45 +222,19 @@ __marimo__/
 # MSSV: 123000882 — Phân Cụm Chủ Đề Văn Bản Tiếng Việt
 # ============================================================
 
-# --- Dữ liệu thô (tái tạo được qua pipeline: scraper.py) ---
+# --- Dữ liệu (tái tạo được qua preprocess.py) ---
 data/raw/*.csv
 data/raw/*.bak
 data/raw/*.txt
-
-# --- Dữ liệu đã xử lý (tái tạo được qua: preprocess.py, embedding.py) ---
 data/processed/*.csv
 data/processed/*.npy
 
-# --- Mô hình đã huấn luyện (file nhị phân lớn, tái tạo qua: topic_model.py) ---
-# LDA (Gensim)
-models/lda_model/*.model
-models/lda_model/*.model.*
-models/lda_model/*.dict
-models/lda_model/*.pkl
-models/lda_model/*.npy
-models/lda_model/*.html
-
-# BERTopic / KMeans Fallback
-models/bertopic_model/
-
-# Metrics (sinh tự động, không cần commit)
-models/metrics.json
-
-# Pickle files chung
+# --- Mô hình đã huấn luyện (file nhị phân, tái tạo qua topic_model.py) ---
+models/
 *.pkl
 
-# --- Cache của các thư viện ML ---
-# HuggingFace / sentence-transformers (tải model paraphrase-multilingual-MiniLM-L12-v2)
-.cache/
-sentence_transformers/
-huggingface_cache/
-
-# underthesea (Vietnamese NLP — tải dữ liệu word segmentation)
+# --- Cache underthesea ---
 underthesea_data/
-
-# Kaggle
-kaggle.json
-.kaggle/
 
 # --- File backup & tạm thời ---
 *.bak
@@ -278,17 +252,24 @@ Desktop.ini
 $RECYCLE.BIN/
 *.lnk
 
-# --- IDE: Visual Studio Code ---
+# --- IDE ---
 .vscode/
-
-# --- IDE: PyCharm / JetBrains ---
 .idea/
 
-# --- Thư mục debug/thử nghiệm ---
+# --- Thư mục output & logs ---
 scratch/
-
-# --- Các file output khác ---
 output/
 results/
 logs/
 *.log
+reports_and_logs/
+
+# --- Claude Code internal state ---
+.claude/
+
+# --- Google Colab / Drive sync folder ---
+Drive_google_colab/
+
+# --- Jupyter Notebooks ---
+notebooks/
+
