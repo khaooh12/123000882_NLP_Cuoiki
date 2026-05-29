@@ -142,11 +142,8 @@ with tab_upload:
             st.error(f"Lỗi khi xử lý file: {e}")
 
 with tab_text:
-    st.write(
-        "Dán hoặc gõ trực tiếp đoạn văn bản. Mỗi **dòng** là một câu/đoạn văn."
-    )
     pasted = st.text_area(
-        "Nhập văn bản (mỗi dòng = 1 câu/đoạn):",
+        "Nhập văn bản:",
         height=220,
         placeholder="Ví dụ:\nHội đồng quản trị thông qua kế hoạch mở rộng thị trường.\nĐội tuyển Việt Nam giành chiến thắng 2-0 trước đối thủ.\n...",
     )
